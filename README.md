@@ -152,3 +152,11 @@ pause_skip_near_goal_m: 1.00
 - [`docs/VERSION_HISTORY.md`](docs/VERSION_HISTORY.md)：版本前因后果、每个功能包做了什么、为什么改、效果如何。
 - [`docs/PARAMETER_TUNING_GUIDE.md`](docs/PARAMETER_TUNING_GUIDE.md)：现场参数含义、调参路线、0.5 m 和 0.3 m 停车参数建议。
 - [`docs/FIELD_TEST_NOTES.md`](docs/FIELD_TEST_NOTES.md)：试车记录模板、测试步骤、故障现象判断表。
+
+## 10. License / 许可证
+
+本项目采用 Apache License 2.0 许可证。具体条款见 [LICENSE](LICENSE) 文件。
+
+Copyright 2026 Hairong Gu, gogozeppel1n, Tianyi Yang, Haonan Li.
+
+版权所有 © 2026 顾海荣、gogozeppel1n、杨天一、李浩南。
