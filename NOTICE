@@ -1,0 +1,8 @@
+RTK Reverse Spraying Nav
+
+Copyright 2026 Hairong Gu, gogozeppel1n, Tianyi Yang, Haonan Li
+
+This project contains ROS1/Noetic packages and documentation for an RTK/INS-based reverse spraying navigation system on a Ranger/AGV-type platform.
+
+Licensed under the Apache License, Version 2.0.
+See the LICENSE file for details.
