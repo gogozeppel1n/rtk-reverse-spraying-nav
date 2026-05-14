@@ -1,0 +1,65 @@
+<launch>
+  <arg name="bestutm_topic" default="/novatel/oem7/bestutm"/>
+  <arg name="inspvax_topic" default="/novatel/oem7/inspvax"/>
+  <arg name="heading2_topic" default="/novatel/oem7/heading2"/>
+  <arg name="pose_topic" default="/rtk_reverse_nav/pose"/>
+  <arg name="fix_valid_topic" default="/rtk_reverse_nav/fix_valid"/>
+  <arg name="cmd_vel_topic" default="/cmd_vel"/>
+  <arg name="path_file" default=""/>
+  <arg name="path_dir" default="/home/agx/rtk_reverse_paths"/>
+  <arg name="path_prefix" default="rtk_reverse_path"/>
+  <arg name="import_path_file" default=""/>
+  <arg name="yaw_offset_deg" default="0.0"/>
+  <arg name="reverse_speed" default="0.15"/>
+  <arg name="lookahead_distance" default="1.0"/>
+  <arg name="tracking_mode" default="line"/>
+  <arg name="enable_segment_pause" default="true"/>
+  <arg name="pause_distance_m" default="0.30"/>
+  <arg name="pause_duration_s" default="3.0"/>
+  <arg name="pause_smooth_stop_s" default="0.35"/>
+  <arg name="pause_smooth_start_s" default="0.50"/>
+  <arg name="resume_max_cross_track_error" default="0.35"/>
+  <arg name="resume_heading_tolerance_deg" default="30.0"/>
+  <arg name="enable_relay" default="true"/>
+  <arg name="relay_port" default="auto"/>
+  <arg name="relay_pulse_seconds" default="2.0"/>
+  <arg name="enable_gui" default="true"/>
+
+  <node pkg="rtk_reverse_nav" type="inspvax_to_utm_pose.py" name="inspvax_to_utm_pose" output="screen">
+    <rosparam command="load" file="$(find rtk_reverse_nav)/config/nav_params.yaml" />
+    <param name="bestutm_topic" value="$(arg bestutm_topic)" />
+    <param name="inspvax_topic" value="$(arg inspvax_topic)" />
+    <param name="heading2_topic" value="$(arg heading2_topic)" />
+    <param name="pose_topic" value="$(arg pose_topic)" />
+    <param name="fix_valid_topic" value="$(arg fix_valid_topic)" />
+    <param name="yaw_offset_deg" value="$(arg yaw_offset_deg)" />
+  </node>
+
+  <node pkg="rtk_reverse_nav" type="reverse_track_nav_node.py" name="reverse_track_nav_node" output="screen">
+    <rosparam command="load" file="$(find rtk_reverse_nav)/config/nav_params.yaml" />
+    <param name="pose_topic" value="$(arg pose_topic)" />
+    <param name="fix_valid_topic" value="$(arg fix_valid_topic)" />
+    <param name="cmd_vel_topic" value="$(arg cmd_vel_topic)" />
+    <param name="path_file" value="$(arg path_file)" />
+    <param name="path_dir" value="$(arg path_dir)" />
+    <param name="path_prefix" value="$(arg path_prefix)" />
+    <param name="import_path_file" value="$(arg import_path_file)" />
+    <param name="reverse_speed" value="$(arg reverse_speed)" />
+    <param name="lookahead_distance" value="$(arg lookahead_distance)" />
+    <param name="tracking_mode" value="$(arg tracking_mode)" />
+    <param name="enable_segment_pause" value="$(arg enable_segment_pause)" />
+    <param name="pause_distance_m" value="$(arg pause_distance_m)" />
+    <param name="pause_duration_s" value="$(arg pause_duration_s)" />
+    <param name="pause_smooth_stop_s" value="$(arg pause_smooth_stop_s)" />
+    <param name="pause_smooth_start_s" value="$(arg pause_smooth_start_s)" />
+    <param name="resume_max_cross_track_error" value="$(arg resume_max_cross_track_error)" />
+    <param name="resume_heading_tolerance_deg" value="$(arg resume_heading_tolerance_deg)" />
+    <param name="enable_relay" value="$(arg enable_relay)" />
+    <param name="relay_port" value="$(arg relay_port)" />
+    <param name="relay_pulse_seconds" value="$(arg relay_pulse_seconds)" />
+  </node>
+
+  <node if="$(arg enable_gui)" pkg="rtk_reverse_nav" type="controller_panel.py" name="controller_panel" output="screen">
+    <param name="default_import_dir" value="$(arg path_dir)" />
+  </node>
+</launch>

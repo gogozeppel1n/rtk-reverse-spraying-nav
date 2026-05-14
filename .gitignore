@@ -1,0 +1,31 @@
+# ROS / catkin build outputs
+build/
+devel/
+install/
+logs/
+.catkin_tools/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# Runtime logs and temporary data
+*.log
+*.bag
+*.active
+*.tmp
+*.bak
+
+# Optional large experiment outputs
+*.db3
+*.mcap

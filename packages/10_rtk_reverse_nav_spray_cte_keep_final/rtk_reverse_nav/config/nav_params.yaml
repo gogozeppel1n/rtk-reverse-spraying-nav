@@ -1,0 +1,140 @@
+# ================================
+# RTK reverse navigation parameters
+# 现场调参只改这个文件；reverse_nav.launch 不再覆盖这些参数。
+# 本版重点：两点喷洒直线模式。横差只生成小航向偏置，停车前退出横差修正，保证每次喷洒时车头方向基本一致。
+# ================================
+
+# ---------- topics ----------
+bestutm_topic: /novatel/oem7/bestutm
+inspvax_topic: /novatel/oem7/inspvax
+heading2_topic: /novatel/oem7/heading2
+pose_topic: /rtk_reverse_nav/pose
+odom_topic: /rtk_reverse_nav/utm_odom
+fix_valid_topic: /rtk_reverse_nav/fix_valid
+source_status_topic: /rtk_reverse_nav/source_status
+cmd_vel_topic: /cmd_vel
+frame_id: utm
+child_frame_id: base_link
+
+# ---------- RTK pose bridge ----------
+prefer_bestutm: true
+allow_inspvax_position_fallback: true
+allow_float_solution: false
+position_timeout: 1.00
+heading_timeout: 1.00
+max_position_stddev: 0.10
+max_heading_stddev_deg: 2.0
+publish_rate: 20.0
+yaw_offset_deg: 0.0
+origin_mode: absolute_utm
+
+# ---------- replay controller ----------
+# 两点直线喷洒作业使用 line；多点轨迹复现时改成 path。
+tracking_mode: line
+
+# 低速、限角速度、限角速度变化率，避免上方丝杠/横杆被大角度纠偏激发。
+reverse_speed: 0.10
+max_angular_speed: 0.08
+enable_global_angular_slew: true
+max_angular_accel: 0.04
+enable_speed_based_angular_limit: true
+min_turn_radius_m: 1.80
+
+# 终点/安全阈值
+goal_tolerance: 0.20
+goal_yaw_tolerance_deg: 20.0
+require_goal_yaw: false
+control_rate: 15.0
+publish_zero_on_idle: true
+pose_timeout: 1.50
+startup_max_distance: 0.50
+startup_heading_tolerance_deg: 12.0
+runtime_heading_limit_deg: 60.0
+
+# 主航向控制。喷洒两点模式下，k_cross_track 不直接参与 line 模式控制；
+# 横差通过下方 cross_track_lookahead_m / max_cross_track_yaw_correction_deg 转成小航向偏置。
+k_heading: 0.80
+k_cross_track: 0.45
+max_cross_track_error: 0.40
+
+# 两点喷洒直线控制：固定作业航向 + 横差小角度慢修 + 停车前航向对齐。
+enable_spray_line_control: true
+# geometry_reverse：两点确定倒车直线，车头朝倒车运动方向的反方向；通常最适合“正着开过去、倒着回来的两点模式”。
+# recorded_start：使用记录起点时的车头 yaw 作为固定作业航向。
+spray_line_yaw_source: geometry_reverse
+# 横差按多长距离慢慢修。越大越柔，越不容易 S 形；越小横差修得更快。
+cross_track_lookahead_m: 2.0
+# 横差最多只允许让车头偏几度去切回轨迹线。喷洒均匀性优先时建议 1.5~2.5。
+max_cross_track_yaw_correction_deg: 3.0
+# 每次停车前最后多少米让横差修正逐渐退出，只保持固定作业航向，保证停车喷洒时车头方向一致。
+pre_stop_align_distance_m: 0.15
+# 停车前横差修正保留比例。0 表示完全退到固定航向；0.35 表示保留 35% 横差小角度修正，避免横差被航向回正抵消。
+pre_stop_cte_keep_ratio: 0.35
+
+# 航差死区，减少车轮细碎摆动。
+heading_deadband_deg: 0.4
+
+# 自动倒车因横向/航向误差过大暂停后，人工调回轨迹附近允许继续接入的阈值
+resume_max_cross_track_error: 0.25
+resume_heading_tolerance_deg: 18.0
+resume_projection_margin_m: 0.30
+
+# 分段推进
+waypoint_reach_tolerance: 0.30
+enable_projection_segment_advance: true
+segment_advance_ratio: 0.90
+enable_nearest_segment_recovery: true
+segment_search_ahead: 12
+segment_recovery_min_improve: 0.08
+waypoint_tolerance_segment_ratio: 0.60
+waypoint_min_reach_tolerance: 0.08
+
+# ---------- recording ----------
+record_point_spacing: 0.30
+record_yaw_spacing_deg: 4.0
+record_yaw_min_distance: 0.10
+enable_path_dedup: true
+path_dedup_spacing: 0.05
+path_dedup_yaw_keep_deg: 2.0
+line_resample_spacing: 0.20
+path_resample_spacing: 0.20
+smooth_window: 1
+
+# ---------- segmented pause / relay ----------
+# 50 cm 一个喷洒作业点：前段小角度修横差，停车前 pre_stop_align_distance_m 内回到固定作业航向。
+enable_segment_pause: true
+pause_distance_m: 0.50
+pause_duration_s: 3.0
+pause_smooth_stop_s: 0.20
+pause_smooth_start_s: 0.30
+pause_skip_near_goal_m: 1.00
+
+# 停车角度保持 + 起步渐进纠偏。若不需要停车保持角度，可设 hold_yaw_during_pause: false。
+hold_yaw_during_pause: true
+pause_hold_yaw_average_s: 0.30
+pause_heading_k: 0.35
+pause_heading_max_angular_speed: 0.03
+resume_straight_time_s: 0.30
+resume_cross_track_ramp_s: 0.60
+pause_resume_max_angular_speed: 0.05
+resume_disable_cross_track_first: true
+
+enable_angular_slew_in_pause: true
+max_pause_angular_accel: 0.04
+pause_start_angular_limit: 0.03
+
+# ---------- USB relay ----------
+enable_relay: true
+relay_port: auto
+relay_baudrate: 9600
+relay_pulse_seconds: 2.0
+relay_serial_timeout: 1.0
+relay_on_hex: "A0 01 01 A2"
+relay_off_hex: "A0 01 00 A1"
+
+# ---------- CSV export / import ----------
+path_dir: /home/agx/rtk_reverse_paths
+path_file: ""
+path_prefix: rtk_reverse_path
+import_path_file: ""
+default_import_dir: /home/agx/rtk_reverse_paths

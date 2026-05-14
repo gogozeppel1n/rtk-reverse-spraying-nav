@@ -1,0 +1,92 @@
+# RTK pose bridge
+prefer_bestutm: true
+allow_inspvax_position_fallback: true
+allow_float_solution: false
+position_timeout: 1.00
+heading_timeout: 1.00
+max_position_stddev: 0.10
+max_heading_stddev_deg: 2.0
+publish_rate: 20.0
+yaw_offset_deg: 0.0
+
+# replay controller
+# 适配“长横杆装置左右随机移动”的工况：不做左右固定补偿，依靠低速、限角速度、影子停车和终点精修。
+tracking_mode: path
+reverse_speed: 0.12
+max_angular_speed: 0.22
+goal_tolerance: 0.10
+goal_yaw_tolerance_deg: 20.0
+require_goal_yaw: false
+control_rate: 15.0
+publish_zero_on_idle: true
+pose_timeout: 1.50
+startup_max_distance: 0.60
+startup_heading_tolerance_deg: 20.0
+runtime_heading_limit_deg: 75.0
+k_heading: 1.50
+k_cross_track: 0.85
+max_cross_track_error: 0.80
+
+# final approach refinement
+# 最后 1 m 不再分段停车，低速连续精修横向误差。
+final_slowdown_distance: 1.00
+final_reverse_speed: 0.06
+final_cross_track_tolerance: 0.03
+final_require_cross_track: true
+final_goal_overrun_tolerance: 0.03
+
+# segment tracking
+waypoint_reach_tolerance: 0.25
+enable_projection_segment_advance: true
+segment_advance_ratio: 0.90
+enable_nearest_segment_recovery: true
+segment_search_ahead: 12
+segment_recovery_min_improve: 0.08
+waypoint_tolerance_segment_ratio: 0.60
+waypoint_min_reach_tolerance: 0.08
+
+# recording
+record_point_spacing: 0.30
+record_yaw_spacing_deg: 4.0
+record_yaw_min_distance: 0.10
+enable_path_dedup: true
+path_dedup_spacing: 0.05
+path_dedup_yaw_keep_deg: 2.0
+line_resample_spacing: 0.20
+path_resample_spacing: 0.20
+smooth_window: 1
+
+# segmented pause / relay
+# 外层停车管理，不改变原来的两点/多点轨迹控制算法。
+enable_segment_pause: true
+pause_distance_m: 0.50
+pause_duration_s: 3.0
+pause_smooth_stop_s: 0.20
+pause_smooth_start_s: 0.30
+pause_skip_near_goal_m: 1.00
+pause_start_angular_limit: 0.10
+
+# 角速度型底盘保护：线速度过低时不输出 angular，防止刚恢复导航时原地自转。
+zero_angular_below_min_linear: true
+min_linear_for_angular: 0.03
+
+# 影子模式：停车时真实输出 0,0；内部保留停车前修正趋势，起步时平滑接回。
+pause_shadow_steering: true
+post_start_slew_s: 0.80
+enable_angular_slew_in_pause: true
+max_pause_angular_accel: 0.10
+
+# USB relay
+enable_relay: true
+relay_port: auto
+relay_baudrate: 9600
+relay_pulse_seconds: 2.0
+relay_serial_timeout: 1.0
+relay_on_hex: "A0 01 01 A2"
+relay_off_hex: "A0 01 00 A1"
+
+# CSV export / import
+path_dir: /home/agx/rtk_reverse_paths
+path_file: ""
+path_prefix: rtk_reverse_path
+import_path_file: ""
