@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>rtk_reverse_nav</name>
+  <version>0.2.0</version>
+  <description>RTK/INS reverse spraying navigation for Ranger/AGV platform with line-mode cross-track integral correction.</description>
+
+  <maintainer email="gogozeppel1n@users.noreply.github.com">gogozeppel1n</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>novatel_oem7_msgs</build_depend>
+
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>novatel_oem7_msgs</exec_depend>
+  <exec_depend>python3-serial</exec_depend>
+
+  <export/>
+</package>
